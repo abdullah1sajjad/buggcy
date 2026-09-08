@@ -1,0 +1,1 @@
+export type { UpdateSiteSettingDto } from '../schemas/site-setting.schema';

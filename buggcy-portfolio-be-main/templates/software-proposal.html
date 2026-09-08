@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>{{clientCompanyName}} - Software Development Proposal</title>
+  <style>
+    @page {
+      margin: 0;
+      size: A4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+      color: #1a1a1a;
+      margin: 0;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    /* FIX 1: min-height instead of height — lets AI-generated content grow naturally.
+     FIX 2: page-break-after only on non-last sections (avoid is not valid for page-break-after).
+     No overflow:hidden — old Chromium re-layouts infinitely when clipped content overflows. */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 56px 64px;
+      position: relative;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      page-break-inside: avoid;
+      break-inside: avoid-page;
+    }
+
+    .page:not(:last-child) {
+      page-break-after: always;
+    }
+
+    /* ---- Cover page ---- */
+    .cover {
+      background: #14122b;
+      color: #fff;
+      padding: 0;
+    }
+
+    .cover-inner {
+      padding: 72px 64px;
+      min-height: 297mm;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .brand img {
+      height: 28px;
+    }
+
+    .cover h1 {
+      font-size: 44px;
+      line-height: 1.15;
+      margin: 120px 0 0;
+      max-width: 560px;
+    }
+
+    .cover-meta {
+      display: flex;
+      gap: 80px;
+      margin-top: 120px;
+    }
+
+    .cover-meta div span {
+      display: block;
+      opacity: 0.6;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .cover-meta div strong {
+      font-size: 15px;
+    }
+
+    /* ---- Section pages ---- */
+    h2.section-title {
+      font-size: 24px;
+      color: #4b3bd4;
+      margin: 0 0 20px;
+      border-bottom: 2px solid #ece9fb;
+      padding-bottom: 12px;
+    }
+
+    h3 {
+      font-size: 16px;
+      margin: 22px 0 8px;
+      color: #14122b;
+    }
+
+    p {
+      margin: 0 0 10px;
+    }
+
+    ul {
+      margin: 0 0 12px;
+      padding-left: 18px;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    .callout {
+      background: #f5f4fd;
+      border-left: 3px solid #4b3bd4;
+      padding: 14px 18px;
+      border-radius: 6px;
+      margin: 14px 0;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eae7fc;
+      color: #4b3bd4;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    /* FIX 3: table page-break rules prevent endless layout attempts on large tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 20px;
+      font-size: 13px;
+      page-break-inside: auto;
+      break-inside: auto;
+    }
+
+    thead {
+      display: table-header-group;
+    }
+
+    tfoot {
+      display: table-footer-group;
+    }
+
+    tbody {
+      break-inside: auto;
+    }
+
+    th {
+      text-align: left;
+      background: #14122b;
+      color: #fff;
+      padding: 10px 12px;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #eee;
+      page-break-inside: avoid;
+    }
+
+    tr {
+      page-break-inside: avoid;
+    }
+
+    tr:nth-child(even) td {
+      background: #faf9ff;
+    }
+
+    .footer {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #999;
+      border-top: 1px solid #eee;
+      padding-top: 8px;
+    }
+
+    /* FIX 4: block layout instead of flex-wrap — old Chromium PDF engine has flex bugs */
+    .team-grid {
+      display: block;
+      margin: 14px 0;
+    }
+
+    .team-card {
+      display: block;
+      background: #faf9ff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+
+    .team-card strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .team-card span {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .signature-block {
+      display: table;
+      width: 100%;
+      margin-top: 60px;
+      table-layout: fixed;
+    }
+
+    .signature-line {
+      display: table-cell;
+      width: 50%;
+      padding-right: 40px;
+      border-top: 1px solid #333;
+      padding-top: 8px;
+      font-size: 12px;
+      vertical-align: top;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- COVER -->
+  <section class="page cover">
+    <div class="cover-inner">
+      <div class="brand">{{companyName}}</div>
+      <h1>Software Development<br />Proposal</h1>
+      <div class="cover-meta">
+        <div><span>Prepared for</span><strong>{{clientContactName}}</strong><br /><strong>{{clientCompanyName}}</strong>
+        </div>
+        <div><span>Prepared by</span><strong>{{senderContactName}}</strong><br /><strong>{{companyName}}</strong></div>
+        <div><span>Date</span><strong>{{proposalDate}}</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INTRO + CLIENT NEEDS -->
+  {{#if pageVisibility.introPage}}
+  <section class="page">
+    <h2 class="section-title">1. Introduction &amp; Understanding Your Needs</h2>
+    <p>{{introductionText}}</p>
+    <h3>Executive Summary</h3>
+    <p>{{aboutUsText}}</p>
+
+    <h3>Challenges We Understand</h3>
+    <ul>
+      {{#each clientChallenges}}<li>{{this}}</li>{{/each}}
+    </ul>
+
+    <h3>Clarifications Needed (Discovery Phase)</h3>
+    <ul>
+      {{#each clarificationsNeeded}}<li>{{this}}</li>{{/each}}
+    </ul>
+
+    <h3>Your Goals</h3>
+    <div class="callout"><strong>Immediate:</strong> {{goalsImmediate}}</div>
+    <div class="callout"><strong>Short-term:</strong> {{goalsShortTerm}}</div>
+    <div class="callout"><strong>Long-term:</strong> {{goalsLongTerm}}</div>
+
+    <h3>Expected Business Outcomes</h3>
+    <ul>
+      {{#each clientBenefits}}<li>{{this}}</li>{{/each}}
+    </ul>
+
+    <div class="footer"><span>{{companyName}} — Software Development Proposal</span><span>1</span></div>
+  </section>
+  {{/if}}
+
+  <!-- PROJECT OVERVIEW + SCOPE -->
+  {{#if pageVisibility.overviewPage}}
+  <section class="page">
+    <h2 class="section-title">2. Project Overview &amp; Scope of Work</h2>
+    <p>{{proposedSolutionText}}</p>
+
+    <h3>Key Features</h3>
+    <ul>
+      {{#each keyFeatures}}<li><strong>{{this.name}}</strong> — {{this.description}}</li>{{/each}}
+    </ul>
+
+    <h3>Architecture Approach</h3>
+    <p>{{architectureApproach}}</p>
+
+    <h3>Scalability & Infrastructure</h3>
+    <p>{{scalabilityApproach}}</p>
+
+    <h3>Recommended Tech Stack</h3>
+    <p>{{techStackReasoning}}</p>
+    <div style="margin-bottom: 12px;">
+      {{#each recommendedStack}}
+      <div style="margin-bottom: 8px;">
+        <span class="badge" style="width: 120px; text-align: center; display: inline-block;">{{this.technology}}</span>
+        <span style="font-size: 13px;">{{this.reason}}</span>
+      </div>
+      {{/each}}
+    </div>
+
+    <h3>Third-Party Integrations</h3>
+    <ul>
+      {{#each thirdPartyIntegrations}}<li>{{this}}</li>{{/each}}
+    </ul>
+
+    <h3>Non-Functional Requirements</h3>
+    <ul>
+      {{#each nonFunctionalRequirements}}<li>{{this}}</li>{{/each}}
+    </ul>
+
+    <h3>Scope of Work</h3>
+    <table>
+      <tr>
+        <th>Phase</th>
+        <th>Description</th>
+        <th>Duration</th>
+      </tr>
+      {{#each scopePhases}}
+      <tr>
+        <td>{{this.phase}}</td>
+        <td>{{this.description}}</td>
+        <td>{{this.duration}}</td>
+      </tr>
+      {{/each}}
+    </table>
+
+    <h3>Future Enhancements</h3>
+    <ul>
+      {{#each futureEnhancements}}<li>{{this}}</li>{{/each}}
+    </ul>
+
+    <div class="footer"><span>{{companyName}} — Software Development Proposal</span><span>2</span></div>
+  </section>
+  {{/if}}
+
+  <!-- TIMELINE + BUDGET -->
+  {{#if pageVisibility.timelinePage}}
+  <section class="page">
+    <h2 class="section-title">3. Timeline &amp; Budget</h2>
+    <p>Estimated total duration: <strong>{{estimatedTimeline}}</strong>, targeting completion by
+      <strong>{{targetCompletionDate}}</strong>.
+    </p>
+
+    <h3>Milestones</h3>
+    <table>
+      <tr>
+        <th>Milestone</th>
+        <th>Target Date</th>
+      </tr>
+      {{#each milestones}}
+      <tr>
+        <td>{{this.name}}</td>
+        <td>{{this.date}}</td>
+      </tr>
+      {{/each}}
+    </table>
+
+    <h3>Project Deliverables</h3>
+    <ul>
+      {{#each projectDeliverables}}<li>{{this}}</li>{{/each}}
+    </ul>
+
+    <h3>Budget Breakdown</h3>
+    <table>
+      <tr>
+        <th>Phase / Discipline</th>
+        <th>Percentage</th>
+        <th>Estimated Cost</th>
+      </tr>
+      {{#each budgetLineItems}}
+      <tr>
+        <td>{{this.item}}</td>
+        <td>{{this.percentage}}</td>
+        <td>{{this.cost}}</td>
+      </tr>
+      {{/each}}
+      <tr>
+        <td><strong>Total Estimated Cost</strong></td>
+        <td><strong>100%</strong></td>
+        <td><strong>{{estimatedCostRange}}</strong></td>
+      </tr>
+    </table>
+
+    <div class="footer"><span>{{companyName}} — Software Development Proposal</span><span>3</span></div>
+  </section>
+  {{/if}}
+
+  <!-- TEAM + WHY US -->
+  {{#if pageVisibility.teamPage}}
+  <section class="page">
+    <h2 class="section-title">4. Project Team &amp; Delivery Approach</h2>
+
+    <p>
+      Based on the project scope and complexity, we recommend the following team
+      composition to ensure timely delivery, high quality, and long-term
+      maintainability.
+    </p>
+
+    <div class="team-grid">
+      {{#each estimatedTeam}}
+      <div class="team-card">
+        <strong>{{this.quantity}} × {{this.role}}</strong>
+        <span>{{this.responsibility}}</span>
+      </div>
+      {{/each}}
+    </div>
+
+    <h3>Why This Team Structure?</h3>
+
+    <ul>
+      {{#each deliveryAdvantages}}
+      <li>{{this}}</li>
+      {{/each}}
+    </ul>
+
+    <div class="callout">
+      <strong>Delivery Philosophy</strong><br>
+      {{deliveryApproach}}
+    </div>
+
+    <div class="footer">
+      <span>{{companyName}} — Software Development Proposal</span>
+      <span>4</span>
+    </div>
+  </section>
+  {{/if}}
+
+  <!-- RISKS & ASSUMPTIONS -->
+  {{#if pageVisibility.risksPage}}
+  <section class="page">
+    <h2 class="section-title">5. Assumptions &amp; Risks</h2>
+
+    <h3>Project Assumptions</h3>
+    <p>Since detailed requirements were not fully provided, this proposal assumes:</p>
+    <ul>
+      {{#each assumptions}}
+      <li>{{this}}</li>
+      {{/each}}
+    </ul>
+
+    <h3>Potential Risks</h3>
+    <ul>
+      {{#each risks}}
+      <li>{{this}}</li>
+      {{/each}}
+    </ul>
+
+    <div class="footer">
+      <span>{{companyName}} — Software Development Proposal</span>
+      <span>5</span>
+    </div>
+  </section>
+  {{/if}}
+
+  <!-- NEXT STEPS + SIGNATURE -->
+  {{#if pageVisibility.nextStepsPage}}
+  <section class="page">
+    <h2 class="section-title">6. Next Steps</h2>
+    <p>{{nextStepsText}}</p>
+
+    <h3>Contact</h3>
+    <p>{{senderContactName}} — {{senderContactEmail}} — {{senderContactPhone}}</p>
+
+    <div class="signature-block">
+      <div class="signature-line">{{clientContactName}}, {{clientCompanyName}}<br />Date: ____________</div>
+      <div class="signature-line">{{senderContactName}}, {{companyName}}<br />Date: ____________</div>
+    </div>
+
+    <div class="footer"><span>{{companyName}} — Software Development Proposal</span><span>6</span></div>
+  </section>
+  {{/if}}
+
+</body>
+
+</html>
